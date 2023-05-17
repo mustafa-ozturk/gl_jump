@@ -22,7 +22,7 @@ const std::string vertex_shader_source = R"(
 
         void main()
         {
-            gl_Position = projection * vec4(pos.xy, 1.0, 1.0);
+            gl_Position = projection * vec4(pos.xy, 1, 1);
         }
 )";
 
@@ -34,7 +34,7 @@ const std::string fragment_shader_source = R"(
 
         void main()
         {
-            FragColor = vec4(color, 1.0f);
+            FragColor = vec4(color.xyz, 1.0f);
         }
 )";
 
@@ -62,17 +62,21 @@ int main()
 
     unsigned int shaderProgram = create_shader_program(vertex_shader_source, fragment_shader_source);
     glUseProgram(shaderProgram);
+    glm::mat4 projection = glm::ortho(0.0f, (float)SCREEN_WIDTH, 0.0f, (float)SCREEN_HEIGHT);
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
 
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        draw_rectangle();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
 
@@ -151,12 +155,13 @@ void draw_rectangle()
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(int), verticies.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, sizeof(verticies), 0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, sizeof(verticies), (const void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(int), indicies.data(), GL_STATIC_DRAW);
 
+    glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
