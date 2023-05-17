@@ -14,6 +14,10 @@ using namespace gl;
 const unsigned int SCREEN_WIDTH = 500;
 const unsigned int SCREEN_HEIGHT = 500;
 
+void draw_rectangle();
+void draw_triangle();
+void draw_line();
+
 int main()
 {
     if (!glfwInit()) return -1;
