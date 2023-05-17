@@ -14,7 +14,6 @@ using namespace gl;
 const unsigned int SCREEN_WIDTH = 500;
 const unsigned int SCREEN_HEIGHT = 500;
 
-// will be used by all 3 objects
 const std::string vertex_shader_source = R"(
         #version 330 core
         layout (location = 0) in vec2 pos;
@@ -27,10 +26,22 @@ const std::string vertex_shader_source = R"(
         }
 )";
 
-void create_shader_program();
-void draw_rectangle();
-void draw_triangle();
-void draw_line();
+const std::string fragment_shader_source = R"(
+        #version 330 core
+        out vec4 FragColor;
+
+        uniform vec3 color;
+
+        void main()
+        {
+            FragColor = vec4(color, 1.0f);
+        }
+)";
+
+unsigned int create_shader_program(const std::string& vertex_source, const std::string& fragment_source);
+void draw_rectangle(unsigned int shaderProgram);
+void draw_triangle(unsigned int shaderProgram);
+void draw_line(unsigned int shaderProgram);
 
 int main()
 {
@@ -48,6 +59,8 @@ int main()
     glfwMakeContextCurrent(window);
 
     glbinding::initialize(glfwGetProcAddress);
+
+    unsigned int shaderProgram = create_shader_program(vertex_shader_source, fragment_shader_source);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -108,7 +121,7 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
     return shaderProgram;
 }
 
-void draw_rectangle()
+void draw_rectangle(unsigned int shaderProgram)
 {
     /*
     *   B - C
@@ -142,7 +155,6 @@ void draw_rectangle()
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(int), indicies.data(), GL_STATIC_DRAW);
-
 
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
