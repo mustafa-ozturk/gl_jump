@@ -39,9 +39,9 @@ const std::string fragment_shader_source = R"(
 )";
 
 unsigned int create_shader_program(const std::string& vertex_source, const std::string& fragment_source);
-void draw_rectangle(unsigned int shaderProgram);
-void draw_triangle(unsigned int shaderProgram);
-void draw_line(unsigned int shaderProgram);
+void draw_rectangle();
+void draw_triangle();
+void draw_line();
 
 int main()
 {
@@ -61,6 +61,7 @@ int main()
     glbinding::initialize(glfwGetProcAddress);
 
     unsigned int shaderProgram = create_shader_program(vertex_shader_source, fragment_shader_source);
+    glUseProgram(shaderProgram);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -121,7 +122,7 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
     return shaderProgram;
 }
 
-void draw_rectangle(unsigned int shaderProgram)
+void draw_rectangle()
 {
     /*
     *   B - C
