@@ -28,8 +28,8 @@ public:
 private:
     struct m_vertex
     {
-        glm::ivec2 position;
-        glm::ivec2 texture_coordinates;
+        glm::vec2 position;
+        glm::vec2 texture_coordinates;
     };
     struct m_character
     {
