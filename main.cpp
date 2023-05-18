@@ -71,7 +71,15 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        draw_rectangle();
+        {
+            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
+            draw_rectangle();
+        }
+
+        {
+            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.5f, 0.0f, 0.5f);
+            draw_triangle();
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -168,4 +176,42 @@ void draw_rectangle()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void draw_triangle()
+{
+    /*
+    *     B
+    *    / \
+    *   A - C
+    */
+    std::array<GLuint, 8> vertices {
+            100, 100,  // A
+            150, 200,  // B
+            200, 100,  // C
+    };
 
+    std::array<GLuint, 6> indices {
+            0, 1, 2,
+    };
+
+    unsigned int VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
+
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
