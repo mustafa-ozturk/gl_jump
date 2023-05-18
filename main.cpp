@@ -16,13 +16,13 @@ const unsigned int SCREEN_HEIGHT = 500;
 
 const std::string vertex_shader_source = R"(
         #version 330 core
-        layout (location = 0) in vec2 pos;
+        layout (location = 0) in vec2 aPos;
 
         uniform mat4 projection;
 
         void main()
         {
-            gl_Position = projection * vec4(pos.xy, 1, 1);
+            gl_Position = projection * vec4(aPos.xy, 1, 1);
         }
 )";
 
@@ -64,7 +64,7 @@ int main()
     glUseProgram(shaderProgram);
     glm::mat4 projection = glm::ortho(0.0f, (float)SCREEN_WIDTH, 0.0f, (float)SCREEN_HEIGHT);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -133,14 +133,14 @@ void draw_rectangle()
     *   | / |
     *   A - D
     */
-    std::array<int, 8> verticies {
+    std::array<GLuint, 8> vertices {
             100, 100,  // A
             100, 200,  // B
             200, 200,  // C
             200, 100   // D
     };
 
-    std::array<int, 6> indicies {
+    std::array<GLuint, 6> indices {
             0, 1, 2,
             0, 2, 3
     };
@@ -153,15 +153,15 @@ void draw_rectangle()
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(int), verticies.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, sizeof(verticies), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(int), indicies.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
