@@ -116,15 +116,38 @@ void gl_textrenderer::render_text(std::string text, float x, float y)
          *   xpos + width
          * FREETYPE GLYPHS ARE REVERSED: 0,0  = top left
          * */
-        std::vector<float> verticies = {
-                xpos, ypos, 0.0f, 1.0f, // A
-                xpos + width, ypos, 1.0f, 1.0f, // B
-                xpos, ypos + height, 0.0f, 0.0f, // C
+        std::vector<m_vertex> verticies = {};
 
-                xpos + width, ypos, 1.0f, 1.0f, // B
-                xpos, ypos + height, 0.0f, 0.0f, // C
-                xpos + width, ypos + height, 1.0f, 0.0f  // D
-        };
+        m_vertex v1 = {};
+        v1.position = {xpos, ypos};
+        v1.texture_coordinates =  {0.0f, 1.0f};
+        verticies.push_back(v1);
+
+        m_vertex v2 = {};
+        v1.position = {xpos + width, ypos};
+        v1.texture_coordinates =  {1.0f, 1.0f};
+        verticies.push_back(v2);
+
+        m_vertex v3 = {};
+        v1.position = {xpos, ypos + height};
+        v1.texture_coordinates =  {0.0f, 0.0f};
+        verticies.push_back(v3);
+
+        m_vertex v4 = {};
+        v1.position = {xpos + width, ypos};
+        v1.texture_coordinates =  {1.0f, 1.0f};
+        verticies.push_back(v4);
+
+        m_vertex v5 = {};
+        v1.position = {xpos, ypos + height};
+        v1.texture_coordinates =  {0.0f, 0.0f};
+        verticies.push_back(v5);
+
+        m_vertex v6 = {};
+        v1.position = {xpos + width, ypos + height};
+        v1.texture_coordinates =  {1.0f, 0.0f};
+        verticies.push_back(v6);
+
 
         // FIXME: very inefficient
         unsigned int VAO_chars;
@@ -136,10 +159,10 @@ void gl_textrenderer::render_text(std::string text, float x, float y)
         glBufferData(GL_ARRAY_BUFFER, verticies.size() * sizeof(float), verticies.data(), GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(m_vertex), (const void*)offsetof(m_vertex, position));
 
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (2 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(m_vertex), (const void*)offsetof(m_vertex, texture_coordinates));
 
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);

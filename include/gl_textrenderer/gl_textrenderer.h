@@ -26,6 +26,11 @@ public:
     void render_text(std::string text, float x, float y);
 
 private:
+    struct m_vertex
+    {
+        glm::ivec2 position;
+        glm::ivec2 texture_coordinates;
+    };
     struct m_character
     {
         unsigned int TextureID;  // opengl texture ID of the glyph
