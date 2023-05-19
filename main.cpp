@@ -66,11 +66,19 @@ int main()
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
 
+    // frame timing
+    double delta_time = 0.0f;
+    double last_frame = 0.0f;
+
     // positions
     int triangle_pos_x = SCREEN_WIDTH;
 
     while (!glfwWindowShouldClose(window))
     {
+        double current_frame = glfwGetTime();
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -78,11 +86,12 @@ int main()
         {
             // TODO: randomize the negative value to not make it repetitive
             // TODO: add deltatime
+            // TODO: increase speed as player gets more points
             if (triangle_pos_x < -100)
             {
                 triangle_pos_x = SCREEN_WIDTH;
             }
-            triangle_pos_x -= 10;
+            triangle_pos_x -= 450 * delta_time;
         }
 
         {
