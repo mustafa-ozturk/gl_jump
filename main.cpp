@@ -93,7 +93,6 @@ int main()
         glUseProgram(shaderProgram);
         // update positions
         {
-            // TODO: increase speed as player gets more points
             int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
             if (triangle_pos_x < triangle_reset_pos_x)
             {
@@ -101,7 +100,7 @@ int main()
                 // add score each time triangle gets reset
                 score += 100;
             }
-            triangle_pos_x -= 450 * delta_time;
+            triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
         }
 
         {
