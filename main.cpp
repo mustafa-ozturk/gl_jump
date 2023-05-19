@@ -73,6 +73,7 @@ int main()
     // positions
     int triangle_pos_x = SCREEN_WIDTH;
 
+    srand(1);
     while (!glfwWindowShouldClose(window))
     {
         double current_frame = glfwGetTime();
@@ -84,10 +85,9 @@ int main()
 
         // update positions
         {
-            // TODO: randomize the negative value to not make it repetitive
-            // TODO: add deltatime
             // TODO: increase speed as player gets more points
-            if (triangle_pos_x < -100)
+            int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
+            if (triangle_pos_x < triangle_reset_pos_x)
             {
                 triangle_pos_x = SCREEN_WIDTH;
             }
