@@ -174,16 +174,18 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
 
 void draw_rectangle()
 {
+    unsigned int width = 60;
+    unsigned int height = 60;
     /*
     *   B - C
     *   | / |
     *   A - D
     */
     std::array<GLuint, 8> vertices {
-            100, 100,  // A
-            100, 200,  // B
-            200, 200,  // C
-            200, 100   // D
+            100,         100,           // A
+            100,         100 +height,   // B
+            100 + width, 100 + height,  // C
+            100 + width, 100            // D
     };
 
     std::array<GLuint, 6> indices {
