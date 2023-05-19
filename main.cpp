@@ -175,16 +175,18 @@ void draw_rectangle()
 {
     unsigned int width = 60;
     unsigned int height = 60;
+    unsigned int pos_x = 100;
+    unsigned int pos_y = 100;
     /*
     *   B - C
     *   | / |
     *   A - D
     */
     std::array<GLuint, 8> vertices {
-            100,         100,           // A
-            100,         100 +height,   // B
-            100 + width, 100 + height,  // C
-            100 + width, 100            // D
+            pos_x,         pos_y,           // A
+            pos_x,         pos_y +height,   // B
+            pos_x + width, pos_y + height,  // C
+            pos_x + width, pos_y            // D
     };
 
     std::array<GLuint, 6> indices {
@@ -219,15 +221,17 @@ void draw_triangle(int triangle_pos_x)
 {
     int width = 50;
     int height = 50;
+    int pos_x = triangle_pos_x;
+    int pos_y = 100;
     /*
     *     B
     *    / \
     *   A - C
     */
     std::array<int, 8> vertices {
-            triangle_pos_x,                 100,            // A
-            triangle_pos_x + width / 2,     100 + height,   // B
-            triangle_pos_x + width,         100,            // C
+            pos_x,                 pos_y,            // A
+            pos_x + width / 2,     pos_y + height,   // B
+            pos_x + width,         pos_y,            // C
     };
 
     std::array<GLuint, 6> indices {
