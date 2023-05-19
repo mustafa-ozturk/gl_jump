@@ -42,6 +42,7 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
 void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y);
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
 void draw_line();
+void check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
 
 int main()
 {
@@ -126,6 +127,8 @@ int main()
             glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
             draw_line();
         }
+
+        check_collision_x(rectangle_pos_x + rectangle_width, rectangle_pos_x, triangle_pos_x, triangle_pos_x + triangle_width);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -297,4 +300,12 @@ void draw_line()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back)
+{
+    if ( rectangle_front >= triangle_front && rectangle_back <= triangle_back)
+    {
+        std::cout << glfwGetTime() << ": colision X detected" << std::endl;
+    }
 }
