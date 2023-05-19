@@ -113,12 +113,12 @@ void gl_gridlines::create_gridline_data()
         m_vertex first_line_point = {};
         first_line_point.position = {0, i, 1 };
         first_line_point.color_alpha = 0.1f;
-        m_verticies.push_back(first_line_point);
+        m_vertices.push_back(first_line_point);
 
         m_vertex second_line_point = {};
         second_line_point.position = {m_screen_width, i, 1 };
         second_line_point.color_alpha = 0.1f;
-        m_verticies.push_back(second_line_point);
+        m_vertices.push_back(second_line_point);
 
         m_lines++;
     }
@@ -129,12 +129,12 @@ void gl_gridlines::create_gridline_data()
         m_vertex first_line_point = {};
         first_line_point.position = {i, 0, 1 };
         first_line_point.color_alpha = 0.1f;
-        m_verticies.push_back(first_line_point);
+        m_vertices.push_back(first_line_point);
 
         m_vertex second_line_point = {};
         second_line_point.position = {i, m_screen_height, 1 };
         second_line_point.color_alpha = 0.1f;
-        m_verticies.push_back(second_line_point);
+        m_vertices.push_back(second_line_point);
 
         m_lines++;
     }
@@ -143,24 +143,24 @@ void gl_gridlines::create_gridline_data()
     m_vertex hz_first_line_point = {};
     hz_first_line_point.position = {m_screen_width / 2, 0, 1 };
     hz_first_line_point.color_alpha = 1.0f;
-    m_verticies.push_back(hz_first_line_point);
+    m_vertices.push_back(hz_first_line_point);
 
     m_vertex hz_second_line_point = {};
     hz_second_line_point.position = {m_screen_width / 2, m_screen_height, 1};
     hz_second_line_point.color_alpha = 1.0f;
-    m_verticies.push_back(hz_second_line_point);
+    m_vertices.push_back(hz_second_line_point);
     m_lines++;
 
     // vertical center line
     m_vertex vrt_first_line_point = {};
     vrt_first_line_point.position = {0, m_screen_height / 2, 1};
     vrt_first_line_point.color_alpha = 1.0f;
-    m_verticies.push_back(vrt_first_line_point);
+    m_vertices.push_back(vrt_first_line_point);
 
     m_vertex vrt_second_line_point = {};
     vrt_second_line_point.position = {m_screen_width, m_screen_height / 2, 1};
     vrt_second_line_point.color_alpha = 1.0f;
-    m_verticies.push_back(vrt_second_line_point);
+    m_vertices.push_back(vrt_second_line_point);
     m_lines++;
 
     for (int i = 0; i < m_lines * 2; i++)
@@ -178,7 +178,7 @@ void gl_gridlines::setup_gl_objects()
     glBindVertexArray(m_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, m_verticies.size() * sizeof(m_vertex), m_verticies.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(m_vertex), m_vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(unsigned int), m_indices.data(), GL_STATIC_DRAW);
