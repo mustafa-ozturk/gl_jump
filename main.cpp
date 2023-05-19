@@ -43,6 +43,7 @@ void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
 void draw_line();
 void check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
+void process_input(GLFWwindow* window, bool& jump);
 
 int main()
 {
@@ -82,6 +83,9 @@ int main()
     int rectangle_pos_x = 100;
     int rectangle_pos_y = 100;
 
+    // jump state
+    bool jump = false;
+    int jump_amount = 10;
 
     gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT, "assets/UbuntuMono-R.ttf", 13, {1.0f, 1.0f, 1.0f, 1.1f});
 
@@ -99,6 +103,23 @@ int main()
 
         std::string score_text = "score: " + std::to_string(score);
         textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
+
+        process_input(window, jump);
+
+        // rectangle jump
+        if (jump)
+        {
+            rectangle_pos_y += jump_amount;
+            if (rectangle_pos_y > 250)
+            {
+                jump_amount = -10;
+            }
+            if (rectangle_pos_y <= 100)
+            {
+                jump_amount = 10;
+                jump = false;
+            }
+        }
 
         glUseProgram(shaderProgram);
         // update positions
@@ -129,7 +150,6 @@ int main()
         }
 
         check_collision_x(rectangle_pos_x + rectangle_width, rectangle_pos_x, triangle_pos_x, triangle_pos_x + triangle_width);
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -307,5 +327,13 @@ void check_collision_x(int rectangle_front, int rectangle_back, int triangle_fro
     if ( rectangle_front >= triangle_front && rectangle_back <= triangle_back)
     {
         std::cout << glfwGetTime() << ": colision X detected" << std::endl;
+    }
+}
+
+void process_input(GLFWwindow* window, bool& jump)
+{
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        jump = true;
     }
 }
