@@ -40,7 +40,7 @@ const std::string fragment_shader_source = R"(
 
 unsigned int create_shader_program(const std::string& vertex_source, const std::string& fragment_source);
 void draw_rectangle();
-void draw_triangle();
+void draw_triangle(int triangle_pos_x);
 void draw_line();
 
 int main()
@@ -66,10 +66,24 @@ int main()
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
 
+    // positions
+    int triangle_pos_x = SCREEN_WIDTH;
+
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // update positions
+        {
+            // TODO: randomize the negative value to not make it repetitive
+            // TODO: add deltatime
+            if (triangle_pos_x < -100)
+            {
+                triangle_pos_x = SCREEN_WIDTH;
+            }
+            triangle_pos_x -= 10;
+        }
 
         {
             glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
@@ -78,7 +92,7 @@ int main()
 
         {
             glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.5f, 0.0f, 0.5f);
-            draw_triangle();
+            draw_triangle(triangle_pos_x);
         }
 
         {
@@ -181,17 +195,17 @@ void draw_rectangle()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void draw_triangle()
+void draw_triangle(int triangle_pos_x)
 {
     /*
     *     B
     *    / \
     *   A - C
     */
-    std::array<GLuint, 8> vertices {
-            100, 100,  // A
-            150, 200,  // B
-            200, 100,  // C
+    std::array<int, 8> vertices {
+            triangle_pos_x, 100,  // A
+            triangle_pos_x + 50, 200,  // B
+            triangle_pos_x + 100, 100,  // C
     };
 
     std::array<GLuint, 6> indices {
@@ -208,7 +222,7 @@ void draw_triangle()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
