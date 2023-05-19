@@ -42,7 +42,8 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
 void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y);
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
 void draw_line();
-void check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
+bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
+bool check_collision_y(int rectangle_bottom);
 void process_input(GLFWwindow* window, bool& jump);
 
 int main()
@@ -149,7 +150,16 @@ int main()
             draw_line();
         }
 
-        check_collision_x(rectangle_pos_x + rectangle_width, rectangle_pos_x, triangle_pos_x, triangle_pos_x + triangle_width);
+
+        if ( check_collision_x(rectangle_pos_x + rectangle_width,
+                               rectangle_pos_x,
+                               triangle_pos_x,
+                               triangle_pos_x + triangle_width
+        ) && check_collision_y(rectangle_pos_y))
+        {
+            std::cout << glfwGetTime() << ": collision detected" << std::endl;
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -322,13 +332,24 @@ void draw_line()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back)
+bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back)
 {
     if ( rectangle_front >= triangle_front && rectangle_back <= triangle_back)
     {
-        std::cout << glfwGetTime() << ": colision X detected" << std::endl;
+        return true;
     }
+    return false;
 }
+
+bool check_collision_y(int rectangle_bottom)
+{
+    if (rectangle_bottom <= 150)
+    {
+        return true;
+    }
+    return false;
+}
+
 
 void process_input(GLFWwindow* window, bool& jump)
 {
