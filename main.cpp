@@ -73,6 +73,8 @@ int main()
     // positions
     int triangle_pos_x = SCREEN_WIDTH;
 
+    gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT, "assets/UbuntuMono-R.ttf", 13, {1.0f, 1.0f, 1.0f, 1.1f});
+
     srand(1);
     while (!glfwWindowShouldClose(window))
     {
@@ -83,6 +85,8 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        textrenderer.render_text("score: ", 10, SCREEN_HEIGHT - 20);
+        glUseProgram(shaderProgram);
         // update positions
         {
             // TODO: increase speed as player gets more points
