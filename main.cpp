@@ -39,8 +39,8 @@ const std::string fragment_shader_source = R"(
 )";
 
 unsigned int create_shader_program(const std::string& vertex_source, const std::string& fragment_source);
-void draw_rectangle();
-void draw_triangle(int triangle_pos_x);
+void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y);
+void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
 void draw_line();
 
 int main()
@@ -71,7 +71,16 @@ int main()
     double last_frame = 0.0f;
 
     // positions
+    int triangle_width = 50;
+    int triangle_height = 50;
     int triangle_pos_x = SCREEN_WIDTH;
+    int triangle_pos_y = 100;
+
+    int rectangle_width = 60;
+    int rectangle_height = 60;
+    int rectangle_pos_x = 100;
+    int rectangle_pos_y = 100;
+
 
     gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT, "assets/UbuntuMono-R.ttf", 13, {1.0f, 1.0f, 1.0f, 1.1f});
 
@@ -105,12 +114,12 @@ int main()
 
         {
             glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-            draw_rectangle();
+            draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
         }
 
         {
             glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
-            draw_triangle(triangle_pos_x);
+            draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
         }
 
         {
@@ -171,22 +180,18 @@ unsigned int create_shader_program(const std::string& vertex_source, const std::
     return shaderProgram;
 }
 
-void draw_rectangle()
+void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y)
 {
-    unsigned int width = 60;
-    unsigned int height = 60;
-    unsigned int pos_x = 100;
-    unsigned int pos_y = 100;
     /*
     *   B - C
     *   | / |
     *   A - D
     */
-    std::array<GLuint, 8> vertices {
-            pos_x,         pos_y,           // A
-            pos_x,         pos_y +height,   // B
-            pos_x + width, pos_y + height,  // C
-            pos_x + width, pos_y            // D
+    std::array<int, 8> vertices {
+            rectangle_pos_x,                    rectangle_pos_y,                       // A
+            rectangle_pos_x,                    rectangle_pos_y + rectangle_height,    // B
+            rectangle_pos_x + rectangle_width,  rectangle_pos_y + rectangle_height,    // C
+            rectangle_pos_x + rectangle_width,  rectangle_pos_y                        // D
     };
 
     std::array<GLuint, 6> indices {
@@ -202,9 +207,9 @@ void draw_rectangle()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(int), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -217,21 +222,17 @@ void draw_rectangle()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void draw_triangle(int triangle_pos_x)
+void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y)
 {
-    int width = 50;
-    int height = 50;
-    int pos_x = triangle_pos_x;
-    int pos_y = 100;
     /*
     *     B
     *    / \
     *   A - C
     */
     std::array<int, 8> vertices {
-            pos_x,                 pos_y,            // A
-            pos_x + width / 2,     pos_y + height,   // B
-            pos_x + width,         pos_y,            // C
+            triangle_pos_x,                         triangle_pos_y,                     // A
+            triangle_pos_x + triangle_width / 2,    triangle_pos_y + triangle_height,   // B
+            triangle_pos_x + triangle_width,        triangle_pos_y,                     // C
     };
 
     std::array<GLuint, 6> indices {
