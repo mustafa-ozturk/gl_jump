@@ -105,17 +105,17 @@ int main()
         }
 
         {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
+            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
             draw_rectangle();
         }
 
         {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.5f, 0.0f, 0.5f);
+            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
             draw_triangle(triangle_pos_x);
         }
 
         {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.5f, 0.5f, 0.0f);
+            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
             draw_line();
         }
 
@@ -216,15 +216,17 @@ void draw_rectangle()
 
 void draw_triangle(int triangle_pos_x)
 {
+    int width = 50;
+    int height = 50;
     /*
     *     B
     *    / \
     *   A - C
     */
     std::array<int, 8> vertices {
-            triangle_pos_x, 100,  // A
-            triangle_pos_x + 50, 200,  // B
-            triangle_pos_x + 100, 100,  // C
+            triangle_pos_x,                 100,            // A
+            triangle_pos_x + width / 2,     100 + height,   // B
+            triangle_pos_x + width,         100,            // C
     };
 
     std::array<GLuint, 6> indices {
