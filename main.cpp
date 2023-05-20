@@ -195,8 +195,8 @@ int main()
                     }
                     // update triangle positions
                     {
-                        triangle_pos_x -= (300 + (score / 1.2)) * delta_time;
-                        bg_triangle_pos_x -= (300 + (score / 1.2)) * delta_time;
+                        triangle_pos_x -= (300 + score) * delta_time;
+                        bg_triangle_pos_x -= (300 + score) * delta_time;
                         int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
                         if (triangle_pos_x < triangle_reset_pos_x)
                         {
