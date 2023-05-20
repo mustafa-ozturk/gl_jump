@@ -198,7 +198,7 @@ int main()
                             triangle_pos_x = SCREEN_WIDTH;
                             // add score each time triangle gets reset
                         }
-                        if (bg_triangle_pos_x <  -bg_triangle_width)
+                        if (bg_triangle_pos_x <  -(bg_triangle_width * 3))
                         {
                             bg_triangle_pos_x = SCREEN_WIDTH;
                             bg_triangle_height = rand() % 5 * 100 + 200;
