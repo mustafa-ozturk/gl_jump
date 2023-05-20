@@ -25,6 +25,8 @@ public:
 
     void render_text(std::string text, float x, float y);
 
+    std::pair<int, int> get_text_size(std::string text);
+
 private:
     struct m_vertex
     {

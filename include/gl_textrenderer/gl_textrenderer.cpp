@@ -1,21 +1,5 @@
 #include "gl_textrenderer.h"
 
-//    example centering text for future ref
-//    int textWidth = 0;
-//    int textHeight = 0;
-//    int count = 0;
-//    for (char c : text)
-//    {
-//        Character ch = Characters[c];
-//        // pick the biggest height in the text
-//        if (ch.Size.y > textHeight)
-//        {
-//            textHeight = ch.Size.y;
-//        }
-//        textWidth += ch.Advance >> 6;
-//        count++;
-//    }
-
 gl_textrenderer::gl_textrenderer(unsigned int screen_width, unsigned int screen_height, std::string font_path,
                                  int pixel_height, std::array<float, 4> colors)
         : m_font_path(font_path),
@@ -300,6 +284,25 @@ unsigned int gl_textrenderer::create_shader_program(std::string& vertex_src, std
     glDeleteShader(fragmentShader);
 
     return shaderProgram;
+}
+
+std::pair<int, int> gl_textrenderer::get_text_size(std::string text)
+{
+    int textWidth = 0;
+    int textHeight = 0;
+    int count = 0;
+    for (char c : text)
+    {
+        m_character ch = m_characters[c];
+        // pick the biggest height in the text
+        if (ch.Size.y > textHeight)
+        {
+            textHeight = ch.Size.y;
+        }
+        textWidth += ch.Advance >> 6;
+        count++;
+    }
+    return {textWidth, textHeight};
 }
 
 
