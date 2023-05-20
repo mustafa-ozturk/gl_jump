@@ -46,6 +46,12 @@ bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_fro
 bool check_collision_y(int rectangle_bottom);
 void process_input(GLFWwindow* window, bool& jump);
 
+enum GAME_STATE
+{
+    START, GAME, END
+};
+int current_game_state = GAME_STATE::GAME;
+
 int main()
 {
     if (!glfwInit()) return -1;
@@ -95,69 +101,71 @@ int main()
     srand(1);
     while (!glfwWindowShouldClose(window))
     {
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
         double current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         std::string score_text = "score: " + std::to_string(score);
-        textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
 
-        process_input(window, jump);
-
-        // rectangle jump
-        if (jump)
+        switch (current_game_state)
         {
-            rectangle_pos_y += jump_amount;
-            if (rectangle_pos_y > 250)
-            {
-                jump_amount = -10;
-            }
-            if (rectangle_pos_y <= 100)
-            {
-                jump_amount = 10;
-                jump = false;
-            }
-        }
-
-        glUseProgram(shaderProgram);
-        // update positions
-        {
-            int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
-            if (triangle_pos_x < triangle_reset_pos_x)
-            {
-                triangle_pos_x = SCREEN_WIDTH;
-                // add score each time triangle gets reset
-                score += 100;
-            }
-            triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
-        }
-
-        {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-            draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
-        }
-
-        {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
-            draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
-        }
-
-        {
-            glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
-            draw_line();
-        }
-
-
-        if ( check_collision_x(rectangle_pos_x + rectangle_width,
-                               rectangle_pos_x,
-                               triangle_pos_x,
-                               triangle_pos_x + triangle_width
-        ) && check_collision_y(rectangle_pos_y))
-        {
-            std::cout << glfwGetTime() << ": collision detected" << std::endl;
+            case GAME_STATE::START:
+                break;
+            case GAME_STATE::GAME:
+                // update
+                {
+                    textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
+                    process_input(window, jump);
+                    // rectangle jump
+                    if (jump)
+                    {
+                        rectangle_pos_y += jump_amount;
+                        if (rectangle_pos_y > 250)
+                        {
+                            jump_amount = -10;
+                        }
+                        if (rectangle_pos_y <= 100)
+                        {
+                            jump_amount = 10;
+                            jump = false;
+                        }
+                    }
+                    // update triangle positions
+                    {
+                        int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
+                        if (triangle_pos_x < triangle_reset_pos_x)
+                        {
+                            triangle_pos_x = SCREEN_WIDTH;
+                            // add score each time triangle gets reset
+                            score += 100;
+                        }
+                        triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
+                    }
+                    if (check_collision_x(rectangle_pos_x + rectangle_width,
+                                          rectangle_pos_x,
+                                          triangle_pos_x,
+                                          triangle_pos_x + triangle_width
+                    ) && check_collision_y(rectangle_pos_y))
+                    {
+                        std::cout << glfwGetTime() << ": collision detected" << std::endl;
+                    }
+                }
+                // draw
+                {
+                    glUseProgram(shaderProgram);
+                    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
+                    draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
+                    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
+                    draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
+                    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
+                    draw_line();
+                }
+                break;
+            case GAME_STATE::END:
+                break;
         }
 
         glfwSwapBuffers(window);
