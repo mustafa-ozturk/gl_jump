@@ -85,7 +85,6 @@ int main()
     double delta_time = 0.0f;
     double last_frame = 0.0f;
 
-    // positions
     int triangle_width = 50;
     int triangle_height = 50;
     int triangle_pos_x = SCREEN_WIDTH;
@@ -105,7 +104,6 @@ int main()
     bool jump = false;
     int jump_amount = 10;
 
-//    gl_gridlines gridlines(SCREEN_WIDTH, SCREEN_HEIGHT, 50, {1.0f, 1.0f, 1.0f});
     gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT, "assets/UbuntuMono-R.ttf", 13, {1.0f, 1.0f, 1.0f, 1.1f});
 
     int score = 0;
@@ -125,11 +123,35 @@ int main()
         auto start_text_size = textrenderer.get_text_size("press [ space ] to start");
         auto score_text_size = textrenderer.get_text_size(score_text);
 
-//                gridlines.draw();
-
         switch (current_game_state)
         {
             case GAME_STATE::START:
+                // update
+                if (!jump)
+                    jump = is_space_key_pressed(window);
+                if (jump)
+                {
+                    rectangle_pos_y += jump_amount;
+                    if (rectangle_pos_y > 250)
+                    {
+                        jump_amount = -10;
+                    }
+                    if (rectangle_pos_y <= 100)
+                    {
+                        jump_amount = 10;
+                        jump = false;
+                        score = 0;
+                        current_game_state = GAME_STATE::GAME;
+                    }
+                }
+
+                // draw
+                glUseProgram(shaderProgram);
+                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
+                draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
+                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
+                draw_line();
+
                 textrenderer.render_text("gl_jump",
                                          SCREEN_WIDTH / 2 - (title_text_size.first / 2),
                                          (SCREEN_HEIGHT - SCREEN_HEIGHT / 3 ) - (title_text_size.second / 2) + 2
@@ -145,29 +167,6 @@ int main()
                                              (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.4 ) - (score_text_size.second / 2) + 2
                     );
                 }
-                if (!jump)
-                    jump = is_space_key_pressed(window);
-                if (jump)
-                {
-                    rectangle_pos_y += jump_amount;
-                    if (rectangle_pos_y > 250)
-                    {
-                        jump_amount = -10;
-                    }
-                    if (rectangle_pos_y <= 100)
-                    {
-                        jump_amount = 10;
-                        jump = false;
-                        score = 0;
-                        triangle_pos_x = SCREEN_WIDTH;
-                        current_game_state = GAME_STATE::GAME;
-                    }
-                }
-                glUseProgram(shaderProgram);
-                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-                draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
-                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
-                draw_line();
                 break;
             case GAME_STATE::GAME:
                 // update
@@ -211,20 +210,19 @@ int main()
                                           triangle_pos_x,
                                           triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
                     {
-                        std::cout << glfwGetTime() << ": collision detected" << std::endl;
                         current_game_state = GAME_STATE::START;
                         rectangle_pos_x = 100;
                         jump = false;
                         bg_triangle_pos_x = SCREEN_WIDTH + 550;
+                        triangle_pos_x = SCREEN_WIDTH;
                     }
                 }
                 // draw
                 {
                     glUseProgram(shaderProgram);
-                    // background
+                    // background triangle
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.13f, 0.13f, 0.13f);
                     draw_triangle(bg_triangle_width, bg_triangle_height, bg_triangle_pos_x, bg_triangle_pos_y);
-
 
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
                     draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
