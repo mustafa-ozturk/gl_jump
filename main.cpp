@@ -122,42 +122,42 @@ int main()
                 break;
             case GAME_STATE::GAME:
                 // update
-            {
-                textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
-                process_input(window, jump);
-                // rectangle jump
-                if (jump)
                 {
-                    rectangle_pos_y += jump_amount;
-                    if (rectangle_pos_y > 250)
+                    textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
+                    process_input(window, jump);
+                    // rectangle jump
+                    if (jump)
                     {
-                        jump_amount = -10;
+                        rectangle_pos_y += jump_amount;
+                        if (rectangle_pos_y > 250)
+                        {
+                            jump_amount = -10;
+                        }
+                        if (rectangle_pos_y <= 100)
+                        {
+                            jump_amount = 10;
+                            jump = false;
+                        }
                     }
-                    if (rectangle_pos_y <= 100)
+                    // update triangle positions
                     {
-                        jump_amount = 10;
-                        jump = false;
+                        int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
+                        if (triangle_pos_x < triangle_reset_pos_x)
+                        {
+                            triangle_pos_x = SCREEN_WIDTH;
+                            // add score each time triangle gets reset
+                            score += 100;
+                        }
+                        triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
+                    }
+                    if (check_collision_x(rectangle_pos_x + rectangle_width,
+                                          rectangle_pos_x,
+                                          triangle_pos_x,
+                                          triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
+                    {
+                        std::cout << glfwGetTime() << ": collision detected" << std::endl;
                     }
                 }
-                // update triangle positions
-                {
-                    int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
-                    if (triangle_pos_x < triangle_reset_pos_x)
-                    {
-                        triangle_pos_x = SCREEN_WIDTH;
-                        // add score each time triangle gets reset
-                        score += 100;
-                    }
-                    triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
-                }
-                if (check_collision_x(rectangle_pos_x + rectangle_width,
-                                      rectangle_pos_x,
-                                      triangle_pos_x,
-                                      triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
-                {
-                    std::cout << glfwGetTime() << ": collision detected" << std::endl;
-                }
-            }
                 // draw
                 {
                     glUseProgram(shaderProgram);
