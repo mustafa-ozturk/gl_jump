@@ -50,7 +50,7 @@ bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_fro
 
 bool check_collision_y(int rectangle_bottom);
 
-void process_input(GLFWwindow* window, bool& jump);
+bool is_space_key_pressed(GLFWwindow* window);
 
 enum GAME_STATE
 {
@@ -124,8 +124,9 @@ int main()
                 // update
                 {
                     textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
-                    process_input(window, jump);
                     // rectangle jump
+                    if (!jump)
+                        jump = is_space_key_pressed(window);
                     if (jump)
                     {
                         rectangle_pos_y += jump_amount;
@@ -364,10 +365,11 @@ bool check_collision_y(int rectangle_bottom)
 }
 
 
-void process_input(GLFWwindow* window, bool& jump)
+bool is_space_key_pressed(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        jump = true;
+        return true;
     }
+    return false;
 }
