@@ -56,7 +56,6 @@ enum GAME_STATE
 {
     START, GAME, END
 };
-int current_game_state = GAME_STATE::START;
 
 int main()
 {
@@ -108,6 +107,10 @@ int main()
 
     int score = 0;
 
+    int current_game_state = GAME_STATE::START;
+
+    double death_time = 0;
+
     srand(1);
     while (!glfwWindowShouldClose(window))
     {
@@ -127,7 +130,9 @@ int main()
         {
             case GAME_STATE::START:
                 // update
-                if (!jump)
+                // add small delay if player just died so they
+                // don't immediately jump again and start the game
+                if (!jump && glfwGetTime() - death_time > 0.2)
                     jump = is_space_key_pressed(window);
                 if (jump)
                 {
@@ -140,8 +145,8 @@ int main()
                     {
                         jump_amount = 10;
                         jump = false;
-                        score = 0;
                         current_game_state = GAME_STATE::GAME;
+                        score = 0;
                     }
                 }
 
@@ -210,11 +215,11 @@ int main()
                                           triangle_pos_x,
                                           triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
                     {
-                        current_game_state = GAME_STATE::START;
-                        rectangle_pos_x = 100;
                         jump = false;
                         bg_triangle_pos_x = SCREEN_WIDTH + 550;
                         triangle_pos_x = SCREEN_WIDTH;
+                        current_game_state = GAME_STATE::START;
+                        death_time = glfwGetTime();
                     }
                 }
                 // draw
