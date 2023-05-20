@@ -39,11 +39,17 @@ const std::string fragment_shader_source = R"(
 )";
 
 unsigned int create_shader_program(const std::string& vertex_source, const std::string& fragment_source);
+
 void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y);
+
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
+
 void draw_line();
+
 bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
+
 bool check_collision_y(int rectangle_bottom);
+
 void process_input(GLFWwindow* window, bool& jump);
 
 enum GAME_STATE
@@ -71,7 +77,7 @@ int main()
 
     unsigned int shaderProgram = create_shader_program(vertex_shader_source, fragment_shader_source);
     glUseProgram(shaderProgram);
-    glm::mat4 projection = glm::ortho(0.0f, (float)SCREEN_WIDTH, 0.0f, (float)SCREEN_HEIGHT);
+    glm::mat4 projection = glm::ortho(0.0f, (float) SCREEN_WIDTH, 0.0f, (float) SCREEN_HEIGHT);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.5f, 0.5f);
 
@@ -116,43 +122,42 @@ int main()
                 break;
             case GAME_STATE::GAME:
                 // update
+            {
+                textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
+                process_input(window, jump);
+                // rectangle jump
+                if (jump)
                 {
-                    textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
-                    process_input(window, jump);
-                    // rectangle jump
-                    if (jump)
+                    rectangle_pos_y += jump_amount;
+                    if (rectangle_pos_y > 250)
                     {
-                        rectangle_pos_y += jump_amount;
-                        if (rectangle_pos_y > 250)
-                        {
-                            jump_amount = -10;
-                        }
-                        if (rectangle_pos_y <= 100)
-                        {
-                            jump_amount = 10;
-                            jump = false;
-                        }
+                        jump_amount = -10;
                     }
-                    // update triangle positions
+                    if (rectangle_pos_y <= 100)
                     {
-                        int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
-                        if (triangle_pos_x < triangle_reset_pos_x)
-                        {
-                            triangle_pos_x = SCREEN_WIDTH;
-                            // add score each time triangle gets reset
-                            score += 100;
-                        }
-                        triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
-                    }
-                    if (check_collision_x(rectangle_pos_x + rectangle_width,
-                                          rectangle_pos_x,
-                                          triangle_pos_x,
-                                          triangle_pos_x + triangle_width
-                    ) && check_collision_y(rectangle_pos_y))
-                    {
-                        std::cout << glfwGetTime() << ": collision detected" << std::endl;
+                        jump_amount = 10;
+                        jump = false;
                     }
                 }
+                // update triangle positions
+                {
+                    int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
+                    if (triangle_pos_x < triangle_reset_pos_x)
+                    {
+                        triangle_pos_x = SCREEN_WIDTH;
+                        // add score each time triangle gets reset
+                        score += 100;
+                    }
+                    triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
+                }
+                if (check_collision_x(rectangle_pos_x + rectangle_width,
+                                      rectangle_pos_x,
+                                      triangle_pos_x,
+                                      triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
+                {
+                    std::cout << glfwGetTime() << ": collision detected" << std::endl;
+                }
+            }
                 // draw
                 {
                     glUseProgram(shaderProgram);
@@ -228,14 +233,14 @@ void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos
     *   | / |
     *   A - D
     */
-    std::array<int, 8> vertices {
-            rectangle_pos_x,                    rectangle_pos_y,                       // A
-            rectangle_pos_x,                    rectangle_pos_y + rectangle_height,    // B
-            rectangle_pos_x + rectangle_width,  rectangle_pos_y + rectangle_height,    // C
-            rectangle_pos_x + rectangle_width,  rectangle_pos_y                        // D
+    std::array<int, 8> vertices{
+            rectangle_pos_x, rectangle_pos_y,                       // A
+            rectangle_pos_x, rectangle_pos_y + rectangle_height,    // B
+            rectangle_pos_x + rectangle_width, rectangle_pos_y + rectangle_height,    // C
+            rectangle_pos_x + rectangle_width, rectangle_pos_y                        // D
     };
 
-    std::array<GLuint, 6> indices {
+    std::array<GLuint, 6> indices{
             0, 1, 2,
             0, 2, 3
     };
@@ -250,7 +255,7 @@ void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(int), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*) 0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -270,13 +275,13 @@ void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, 
     *    / \
     *   A - C
     */
-    std::array<int, 8> vertices {
-            triangle_pos_x,                         triangle_pos_y,                     // A
-            triangle_pos_x + triangle_width / 2,    triangle_pos_y + triangle_height,   // B
-            triangle_pos_x + triangle_width,        triangle_pos_y,                     // C
+    std::array<int, 8> vertices{
+            triangle_pos_x, triangle_pos_y,                     // A
+            triangle_pos_x + triangle_width / 2, triangle_pos_y + triangle_height,   // B
+            triangle_pos_x + triangle_width, triangle_pos_y,                     // C
     };
 
-    std::array<GLuint, 6> indices {
+    std::array<GLuint, 6> indices{
             0, 1, 2,
     };
 
@@ -290,7 +295,7 @@ void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*) 0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -308,12 +313,12 @@ void draw_line()
     /*
      *   A --- B
     */
-    std::array<GLuint, 8> vertices {
+    std::array<GLuint, 8> vertices{
             0, 100,  // A
             SCREEN_WIDTH, 100,  // B
     };
 
-    std::array<GLuint, 2> indices {
+    std::array<GLuint, 2> indices{
             0, 1,
     };
 
@@ -327,7 +332,7 @@ void draw_line()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*)0);
+    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint), (const void*) 0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -342,7 +347,7 @@ void draw_line()
 
 bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back)
 {
-    if ( rectangle_front >= triangle_front && rectangle_back <= triangle_back)
+    if (rectangle_front >= triangle_front && rectangle_back <= triangle_back)
     {
         return true;
     }
