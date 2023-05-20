@@ -91,6 +91,11 @@ int main()
     int triangle_pos_x = SCREEN_WIDTH;
     int triangle_pos_y = 100;
 
+    int bg_triangle_pos_x = triangle_pos_x + 550;
+    int bg_triangle_pos_y = triangle_pos_y;
+    int bg_triangle_height = rand() % 8 * 100 + 200;
+    int bg_triangle_width = rand() % 8 * 100 + 200;
+
     int rectangle_width = 60;
     int rectangle_height = 60;
     int rectangle_pos_x = 100;
@@ -167,7 +172,7 @@ int main()
             case GAME_STATE::GAME:
                 // update
                 {
-                    textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
+                    score += 1;
                     // rectangle jump
                     if (!jump)
                         jump = is_space_key_pressed(window);
@@ -186,14 +191,20 @@ int main()
                     }
                     // update triangle positions
                     {
+                        triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
+                        bg_triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
                         int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
                         if (triangle_pos_x < triangle_reset_pos_x)
                         {
                             triangle_pos_x = SCREEN_WIDTH;
                             // add score each time triangle gets reset
-                            score += 100;
                         }
-                        triangle_pos_x -= (300 + (score / 1.8)) * delta_time;
+                        if (bg_triangle_pos_x <  -bg_triangle_width)
+                        {
+                            bg_triangle_pos_x = SCREEN_WIDTH;
+                            bg_triangle_height = rand() % 5 * 100 + 200;
+                            bg_triangle_width = rand() % 8 * 100 + 200;
+                        }
                     }
                     if (check_collision_x(rectangle_pos_x + rectangle_width,
                                           rectangle_pos_x,
@@ -204,17 +215,25 @@ int main()
                         current_game_state = GAME_STATE::START;
                         rectangle_pos_x = 100;
                         jump = false;
+                        bg_triangle_pos_x = SCREEN_WIDTH + 550;
                     }
                 }
                 // draw
                 {
                     glUseProgram(shaderProgram);
+                    // background
+                    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.13f, 0.13f, 0.13f);
+                    draw_triangle(bg_triangle_width, bg_triangle_height, bg_triangle_pos_x, bg_triangle_pos_y);
+
+
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
                     draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
                     draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
                     draw_line();
+
+                    textrenderer.render_text(score_text, 10, SCREEN_HEIGHT - 20);
                 }
                 break;
         }
