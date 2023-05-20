@@ -118,6 +118,7 @@ int main()
         std::string score_text = "score: " + std::to_string(score);
         auto title_text_size = textrenderer.get_text_size("gl_jump");
         auto start_text_size = textrenderer.get_text_size("press [ space ] to start");
+        auto score_text_size = textrenderer.get_text_size(score_text);
 
 //                gridlines.draw();
 
@@ -126,12 +127,19 @@ int main()
             case GAME_STATE::START:
                 textrenderer.render_text("gl_jump",
                                          SCREEN_WIDTH / 2 - (title_text_size.first / 2),
-                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.2 ) - (title_text_size.second / 2) + 2
+                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 3 ) - (title_text_size.second / 2) + 2
                 );
                 textrenderer.render_text("press [ space ] to start",
                                          SCREEN_WIDTH / 2 - (start_text_size.first / 2),
-                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2 ) - (start_text_size.second / 2) + 2
+                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.6 ) - (start_text_size.second / 2) + 2
                 );
+                if (score > 0)
+                {
+                    textrenderer.render_text(score_text,
+                                             SCREEN_WIDTH / 2 - (score_text_size.first / 2),
+                                             (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.4 ) - (score_text_size.second / 2) + 2
+                    );
+                }
                 if (!jump)
                     jump = is_space_key_pressed(window);
                 if (jump)
@@ -145,6 +153,8 @@ int main()
                     {
                         jump_amount = 10;
                         jump = false;
+                        score = 0;
+                        triangle_pos_x = SCREEN_WIDTH;
                         current_game_state = GAME_STATE::GAME;
                     }
                 }
@@ -191,6 +201,9 @@ int main()
                                           triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
                     {
                         std::cout << glfwGetTime() << ": collision detected" << std::endl;
+                        current_game_state = GAME_STATE::START;
+                        rectangle_pos_x = 100;
+                        jump = false;
                     }
                 }
                 // draw
@@ -203,8 +216,6 @@ int main()
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
                     draw_line();
                 }
-                break;
-            case GAME_STATE::END:
                 break;
         }
 
@@ -391,7 +402,7 @@ bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_fro
 
 bool check_collision_y(int rectangle_bottom)
 {
-    if (rectangle_bottom <= 150)
+    if (rectangle_bottom <= 135)
     {
         return true;
     }
