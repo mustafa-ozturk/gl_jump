@@ -56,7 +56,7 @@ enum GAME_STATE
 {
     START, GAME, END
 };
-int current_game_state = GAME_STATE::GAME;
+int current_game_state = GAME_STATE::START;
 
 int main()
 {
@@ -100,6 +100,7 @@ int main()
     bool jump = false;
     int jump_amount = 10;
 
+//    gl_gridlines gridlines(SCREEN_WIDTH, SCREEN_HEIGHT, 50, {1.0f, 1.0f, 1.0f});
     gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT, "assets/UbuntuMono-R.ttf", 13, {1.0f, 1.0f, 1.0f, 1.1f});
 
     int score = 0;
@@ -115,10 +116,43 @@ int main()
         last_frame = current_frame;
 
         std::string score_text = "score: " + std::to_string(score);
+        auto title_text_size = textrenderer.get_text_size("gl_jump");
+        auto start_text_size = textrenderer.get_text_size("press [ space ] to start");
+
+//                gridlines.draw();
 
         switch (current_game_state)
         {
             case GAME_STATE::START:
+                textrenderer.render_text("gl_jump",
+                                         SCREEN_WIDTH / 2 - (title_text_size.first / 2),
+                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.2 ) - (title_text_size.second / 2) + 2
+                );
+                textrenderer.render_text("press [ space ] to start",
+                                         SCREEN_WIDTH / 2 - (start_text_size.first / 2),
+                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2 ) - (start_text_size.second / 2) + 2
+                );
+                if (!jump)
+                    jump = is_space_key_pressed(window);
+                if (jump)
+                {
+                    rectangle_pos_y += jump_amount;
+                    if (rectangle_pos_y > 250)
+                    {
+                        jump_amount = -10;
+                    }
+                    if (rectangle_pos_y <= 100)
+                    {
+                        jump_amount = 10;
+                        jump = false;
+                        current_game_state = GAME_STATE::GAME;
+                    }
+                }
+                glUseProgram(shaderProgram);
+                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
+                draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
+                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
+                draw_line();
                 break;
             case GAME_STATE::GAME:
                 // update
