@@ -3,12 +3,12 @@
 #include <glbinding/glbinding.h>
 #include <glbinding/gl/gl.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include "freetype-2.12.0/include/ft2build.h"
+#include FT_FREETYPE_H"freetype-2.12.0/include/freetype/freetype.h"
 
 #include "gl_textrenderer/gl_textrenderer.h"
 #include "gl_gridlines/gl_gridlines.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 
 using namespace gl;
 
