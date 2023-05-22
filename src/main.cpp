@@ -9,6 +9,7 @@
 #include "gl_textrenderer/gl_textrenderer.h"
 #include "gl_gridlines/gl_gridlines.h"
 #include "Shader/Shader.h"
+#include "Rectangle/Rectangle.h"
 
 using namespace gl;
 
@@ -65,15 +66,13 @@ int main()
     int triangle_pos_x = SCREEN_WIDTH;
     int triangle_pos_y = 100;
 
+
     int bg_triangle_pos_x = triangle_pos_x + 550;
     int bg_triangle_pos_y = triangle_pos_y;
     int bg_triangle_height = rand() % 8 * 100 + 200;
     int bg_triangle_width = rand() % 8 * 100 + 200;
 
-    int rectangle_width = 60;
-    int rectangle_height = 60;
-    int rectangle_pos_x = 100;
-    int rectangle_pos_y = 100;
+    Rectangle rectangle(60, 60, 100, 100);
 
     // jump state
     bool jump = false;
@@ -112,12 +111,12 @@ int main()
                     jump = is_space_key_pressed(window);
                 if (jump)
                 {
-                    rectangle_pos_y += jump_amount;
-                    if (rectangle_pos_y > 250)
+                    rectangle.rectangle_pos_y += jump_amount;
+                    if (rectangle.rectangle_pos_y > 250)
                     {
                         jump_amount = -10;
                     }
-                    if (rectangle_pos_y <= 100)
+                    if (rectangle.rectangle_pos_y <= 100)
                     {
                         jump_amount = 10;
                         jump = false;
@@ -129,7 +128,7 @@ int main()
                 // draw
                 glUseProgram(shaderProgram);
                 glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-                draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
+                rectangle.draw();
                 glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
                 draw_line();
 
@@ -158,12 +157,12 @@ int main()
                         jump = is_space_key_pressed(window);
                     if (jump)
                     {
-                        rectangle_pos_y += jump_amount;
-                        if (rectangle_pos_y > 250)
+                        rectangle.rectangle_pos_y += jump_amount;
+                        if (rectangle.rectangle_pos_y > 250)
                         {
                             jump_amount = -10;
                         }
-                        if (rectangle_pos_y <= 100)
+                        if (rectangle.rectangle_pos_y <= 100)
                         {
                             jump_amount = 10;
                             jump = false;
@@ -186,10 +185,10 @@ int main()
                             bg_triangle_width = rand() % 8 * 100 + 200;
                         }
                     }
-                    if (check_collision_x(rectangle_pos_x + rectangle_width,
-                                          rectangle_pos_x,
+                    if (check_collision_x(rectangle.rectangle_pos_x + rectangle.rectangle_width,
+                                          rectangle.rectangle_pos_x,
                                           triangle_pos_x,
-                                          triangle_pos_x + triangle_width) && check_collision_y(rectangle_pos_y))
+                                          triangle_pos_x + triangle_width) && check_collision_y(rectangle.rectangle_pos_y))
                     {
                         jump = false;
                         bg_triangle_pos_x = SCREEN_WIDTH + 550;
@@ -206,7 +205,7 @@ int main()
                     draw_triangle(bg_triangle_width, bg_triangle_height, bg_triangle_pos_x, bg_triangle_pos_y);
 
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-                    draw_rectangle(rectangle_width, rectangle_height, rectangle_pos_x, rectangle_pos_y);
+                    rectangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
                     draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
@@ -222,48 +221,6 @@ int main()
     }
 
     return 0;
-}
-
-void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y)
-{
-    /*
-    *   B - C
-    *   | / |
-    *   A - D
-    */
-    std::array<int, 8> vertices{
-            rectangle_pos_x, rectangle_pos_y,                       // A
-            rectangle_pos_x, rectangle_pos_y + rectangle_height,    // B
-            rectangle_pos_x + rectangle_width, rectangle_pos_y + rectangle_height,    // C
-            rectangle_pos_x + rectangle_width, rectangle_pos_y                        // D
-    };
-
-    std::array<GLuint, 6> indices{
-            0, 1, 2,
-            0, 2, 3
-    };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(int), vertices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*) 0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y)
