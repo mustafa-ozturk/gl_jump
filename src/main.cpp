@@ -7,6 +7,7 @@
 #include "gl_gridlines/gl_gridlines.h"
 #include "Shader/Shader.h"
 #include "Rectangle/Rectangle.h"
+#include "Triangle/Triangle.h"
 
 using namespace gl;
 
@@ -56,14 +57,10 @@ int main()
     double delta_time = 0.0f;
     double last_frame = 0.0f;
 
-    int triangle_width = 50;
-    int triangle_height = 50;
-    int triangle_pos_x = SCREEN_WIDTH;
-    int triangle_pos_y = 100;
+    Triangle triangle(50, 50, SCREEN_WIDTH, 100);
 
-
-    int bg_triangle_pos_x = triangle_pos_x + 550;
-    int bg_triangle_pos_y = triangle_pos_y;
+    int bg_triangle_pos_x = triangle.triangle_pos_x + 550;
+    int bg_triangle_pos_y = triangle.triangle_pos_y;
     int bg_triangle_height = rand() % 8 * 100 + 200;
     int bg_triangle_width = rand() % 8 * 100 + 200;
 
@@ -165,12 +162,12 @@ int main()
                     }
                     // update triangle positions
                     {
-                        triangle_pos_x -= (300 + score) * delta_time;
+                        triangle.triangle_pos_x -= (300 + score) * delta_time;
                         bg_triangle_pos_x -= (300 + score) * delta_time;
                         int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
-                        if (triangle_pos_x < triangle_reset_pos_x)
+                        if (triangle.triangle_pos_x < triangle_reset_pos_x)
                         {
-                            triangle_pos_x = SCREEN_WIDTH;
+                            triangle.triangle_pos_x = SCREEN_WIDTH;
                             // add score each time triangle gets reset
                         }
                         if (bg_triangle_pos_x <  -(bg_triangle_width * 3))
@@ -182,12 +179,12 @@ int main()
                     }
                     if (check_collision_x(rectangle.rectangle_pos_x + rectangle.rectangle_width,
                                           rectangle.rectangle_pos_x,
-                                          triangle_pos_x,
-                                          triangle_pos_x + triangle_width) && check_collision_y(rectangle.rectangle_pos_y))
+                                          triangle.triangle_pos_x,
+                                          triangle.triangle_pos_x + triangle.triangle_width) && check_collision_y(rectangle.rectangle_pos_y))
                     {
                         jump = false;
                         bg_triangle_pos_x = SCREEN_WIDTH + 550;
-                        triangle_pos_x = SCREEN_WIDTH;
+                        triangle.triangle_pos_x = SCREEN_WIDTH;
                         current_game_state = GAME_STATE::START;
                         death_time = glfwGetTime();
                     }
@@ -202,7 +199,7 @@ int main()
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
                     rectangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
-                    draw_triangle(triangle_width, triangle_height, triangle_pos_x, triangle_pos_y);
+                    triangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
                     draw_line();
 
