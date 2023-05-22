@@ -16,8 +16,6 @@ using namespace gl;
 const unsigned int SCREEN_WIDTH = 500;
 const unsigned int SCREEN_HEIGHT = 500;
 
-void draw_rectangle(int rectangle_width, int rectangle_height, int rectangle_pos_x, int rectangle_pos_y);
-
 void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
 
 void draw_line();
