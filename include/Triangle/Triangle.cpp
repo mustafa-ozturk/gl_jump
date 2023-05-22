@@ -53,3 +53,12 @@ void Triangle::draw()
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+void Triangle::update_position(int score, double delta_time, unsigned int screen_width, int reset_pos)
+{
+    triangle_pos_x -= (300 + score) * delta_time;
+    if (triangle_pos_x < reset_pos)
+    {
+        triangle_pos_x = screen_width;
+    }
+}

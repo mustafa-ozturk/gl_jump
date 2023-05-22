@@ -155,21 +155,13 @@ int main()
                         }
                     }
                     // update triangle positions
+                    triangle.update_position(score, delta_time, SCREEN_WIDTH, -((rand() % 50) * 100) - 200);
+                    bg_triangle.update_position(score, delta_time, SCREEN_WIDTH, -(bg_triangle.triangle_width * 3));
+                    // randomize background triangle size
+                    if (bg_triangle.triangle_pos_x <  -(bg_triangle.triangle_width * 3))
                     {
-                        triangle.triangle_pos_x -= (300 + score) * delta_time;
-                        bg_triangle.triangle_pos_x -= (300 + score) * delta_time;
-                        int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
-                        if (triangle.triangle_pos_x < triangle_reset_pos_x)
-                        {
-                            triangle.triangle_pos_x = SCREEN_WIDTH;
-                            // add score each time triangle gets reset
-                        }
-                        if (bg_triangle.triangle_pos_x <  -(bg_triangle.triangle_width * 3))
-                        {
-                            bg_triangle.triangle_pos_x = SCREEN_WIDTH;
-                            bg_triangle.triangle_height = rand() % 5 * 100 + 200;
-                            bg_triangle.triangle_width = rand() % 8 * 100 + 200;
-                        }
+                        bg_triangle.triangle_height = rand() % 5 * 100 + 200;
+                        bg_triangle.triangle_width = rand() % 8 * 100 + 200;
                     }
                     if (check_collision_x(rectangle.rectangle_pos_x + rectangle.rectangle_width,
                                           rectangle.rectangle_pos_x,
