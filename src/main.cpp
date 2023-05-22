@@ -14,8 +14,6 @@ using namespace gl;
 const unsigned int SCREEN_WIDTH = 500;
 const unsigned int SCREEN_HEIGHT = 500;
 
-void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y);
-
 void draw_line();
 
 bool check_collision_x(int rectangle_front, int rectangle_back, int triangle_front, int triangle_back);
@@ -58,11 +56,7 @@ int main()
     double last_frame = 0.0f;
 
     Triangle triangle(50, 50, SCREEN_WIDTH, 100);
-
-    int bg_triangle_pos_x = triangle.triangle_pos_x + 550;
-    int bg_triangle_pos_y = triangle.triangle_pos_y;
-    int bg_triangle_height = rand() % 8 * 100 + 200;
-    int bg_triangle_width = rand() % 8 * 100 + 200;
+    Triangle bg_triangle(rand() % 8 * 100 + 200, rand() % 8 * 100 + 200, triangle.triangle_pos_x + 550, triangle.triangle_pos_y);
 
     Rectangle rectangle(60, 60, 100, 100);
 
@@ -163,18 +157,18 @@ int main()
                     // update triangle positions
                     {
                         triangle.triangle_pos_x -= (300 + score) * delta_time;
-                        bg_triangle_pos_x -= (300 + score) * delta_time;
+                        bg_triangle.triangle_pos_x -= (300 + score) * delta_time;
                         int triangle_reset_pos_x = -((rand() % 50) * 100) - 200;
                         if (triangle.triangle_pos_x < triangle_reset_pos_x)
                         {
                             triangle.triangle_pos_x = SCREEN_WIDTH;
                             // add score each time triangle gets reset
                         }
-                        if (bg_triangle_pos_x <  -(bg_triangle_width * 3))
+                        if (bg_triangle.triangle_pos_x <  -(bg_triangle.triangle_width * 3))
                         {
-                            bg_triangle_pos_x = SCREEN_WIDTH;
-                            bg_triangle_height = rand() % 5 * 100 + 200;
-                            bg_triangle_width = rand() % 8 * 100 + 200;
+                            bg_triangle.triangle_pos_x = SCREEN_WIDTH;
+                            bg_triangle.triangle_height = rand() % 5 * 100 + 200;
+                            bg_triangle.triangle_width = rand() % 8 * 100 + 200;
                         }
                     }
                     if (check_collision_x(rectangle.rectangle_pos_x + rectangle.rectangle_width,
@@ -183,7 +177,7 @@ int main()
                                           triangle.triangle_pos_x + triangle.triangle_width) && check_collision_y(rectangle.rectangle_pos_y))
                     {
                         jump = false;
-                        bg_triangle_pos_x = SCREEN_WIDTH + 550;
+                        bg_triangle.triangle_pos_x = SCREEN_WIDTH + 550;
                         triangle.triangle_pos_x = SCREEN_WIDTH;
                         current_game_state = GAME_STATE::START;
                         death_time = glfwGetTime();
@@ -194,8 +188,7 @@ int main()
                     glUseProgram(shaderProgram);
                     // background triangle
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.13f, 0.13f, 0.13f);
-                    draw_triangle(bg_triangle_width, bg_triangle_height, bg_triangle_pos_x, bg_triangle_pos_y);
-
+                    bg_triangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
                     rectangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
@@ -213,46 +206,6 @@ int main()
     }
 
     return 0;
-}
-
-void draw_triangle(int triangle_width, int triangle_height, int triangle_pos_x, int triangle_pos_y)
-{
-    /*
-    *     B
-    *    / \
-    *   A - C
-    */
-    std::array<int, 8> vertices{
-            triangle_pos_x, triangle_pos_y,                     // A
-            triangle_pos_x + triangle_width / 2, triangle_pos_y + triangle_height,   // B
-            triangle_pos_x + triangle_width, triangle_pos_y,                     // C
-    };
-
-    std::array<GLuint, 6> indices{
-            0, 1, 2,
-    };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint), vertices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(int), (const void*) 0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void draw_line()
