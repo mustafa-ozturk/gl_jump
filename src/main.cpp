@@ -89,19 +89,13 @@ int main()
                 // update
                 // add small delay if player just died so they
                 // don't immediately jump again and start the game
-                if (!rectangle.jump && glfwGetTime() - death_time > 0.2)
-                    rectangle.jump = is_space_key_pressed(window);
-                if (rectangle.jump)
+                if (!rectangle.jump_state && glfwGetTime() - death_time > 0.2)
+                    rectangle.jump_state = is_space_key_pressed(window);
+                if (rectangle.jump_state)
                 {
-                    rectangle.rectangle_pos_y += rectangle.jump_amount;
-                    if (rectangle.rectangle_pos_y > 250)
-                    {
-                        rectangle.jump_amount = -10;
-                    }
+                    rectangle.jump();
                     if (rectangle.rectangle_pos_y <= 100)
                     {
-                        rectangle.jump_amount = 10;
-                        rectangle.jump = false;
                         current_game_state = GAME_STATE::GAME;
                         score = 0;
                     }
@@ -135,20 +129,11 @@ int main()
                 {
                     score += 1;
                     // rectangle jump
-                    if (!rectangle.jump)
-                        rectangle.jump = is_space_key_pressed(window);
-                    if (rectangle.jump)
+                    if (!rectangle.jump_state)
+                        rectangle.jump_state = is_space_key_pressed(window);
+                    if (rectangle.jump_state)
                     {
-                        rectangle.rectangle_pos_y += rectangle.jump_amount;
-                        if (rectangle.rectangle_pos_y > 250)
-                        {
-                            rectangle.jump_amount = -10;
-                        }
-                        if (rectangle.rectangle_pos_y <= 100)
-                        {
-                            rectangle.jump_amount = 10;
-                            rectangle.jump = false;
-                        }
+                        rectangle.jump();
                     }
                     // update triangle positions
                     triangle.update_position(score, delta_time, SCREEN_WIDTH, -((rand() % 50) * 100) - 200);
@@ -164,7 +149,7 @@ int main()
                                           triangle.triangle_pos_x,
                                           triangle.triangle_pos_x + triangle.triangle_width) && check_collision_y(rectangle.rectangle_pos_y))
                     {
-                        rectangle.jump = false;
+                        rectangle.jump_state = false;
                         bg_triangle.triangle_pos_x = SCREEN_WIDTH + 550;
                         triangle.triangle_pos_x = SCREEN_WIDTH;
                         current_game_state = GAME_STATE::START;
