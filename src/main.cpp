@@ -244,9 +244,8 @@ void draw_line()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-bool
-check_collision_x(int rectangle_front, int rectangle_back, int triangle_front,
-                  int triangle_back)
+bool check_collision_x(int rectangle_front, int rectangle_back,
+                       int triangle_front, int triangle_back)
 {
     if (rectangle_front >= triangle_front && rectangle_back <= triangle_back)
     {
