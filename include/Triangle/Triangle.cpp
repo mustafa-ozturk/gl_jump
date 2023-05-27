@@ -14,8 +14,10 @@ Triangle::~Triangle()
 
 }
 
-void Triangle::draw()
+void Triangle::draw(unsigned int shader_program, float r, float g, float b)
 {
+    glUseProgram(shader_program);
+    glUniform3f(glGetUniformLocation(shader_program, "color"), r, g, b);
     /*
     *     B
     *    / \
