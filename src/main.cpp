@@ -72,10 +72,8 @@ int main()
                                  {1.0f, 1.0f, 1.0f, 1.1f});
 
     int score = 0;
-
     int current_game_state = GAME_STATE::START;
-
-    double death_time = 0;
+    int prev_space_state = GLFW_RELEASE;
 
     srand(1);
     while (!glfwWindowShouldClose(window))
@@ -93,14 +91,19 @@ int main()
                 "press [ space ] to start");
         auto score_text_size = textrenderer.get_text_size(score_text);
 
+        int curr_space_state = glfwGetKey(window, GLFW_KEY_SPACE);
+
         switch (current_game_state)
         {
             case GAME_STATE::START:
                 // update
-                // add small delay if player just died so they
-                // don't immediately jump again and start the game
-                if (!rectangle.jump_state && glfwGetTime() - death_time > 0.2)
+
+                // don't allow game to restart
+                // if player was previously holding space
+                if (curr_space_state == GLFW_PRESS && prev_space_state == GLFW_RELEASE)
+                {
                     rectangle.jump_state = is_space_key_pressed(window);
+                }
                 if (rectangle.jump_state)
                 {
                     rectangle.jump();
@@ -143,9 +146,11 @@ int main()
                 // update
             {
                 score += 1;
-
-                if (!rectangle.jump_state)
+                // allow the player to hold space by not checking prev state
+                if (curr_space_state == GLFW_PRESS)
+                {
                     rectangle.jump_state = is_space_key_pressed(window);
+                }
                 if (rectangle.jump_state)
                 {
                     rectangle.jump();
@@ -175,7 +180,6 @@ int main()
                     bg_triangle.triangle_pos_x = SCREEN_WIDTH + 550;
                     triangle.triangle_pos_x = SCREEN_WIDTH;
                     current_game_state = GAME_STATE::START;
-                    death_time = glfwGetTime();
                 }
             }
                 // draw
@@ -193,6 +197,7 @@ int main()
                 }
                 break;
         }
+        prev_space_state = curr_space_state;
 
         glfwSwapBuffers(window);
         glfwPollEvents();
