@@ -14,4 +14,6 @@ public:
     int rectangle_height = 0;
     int rectangle_pos_x = 0;
     int rectangle_pos_y = 0;
+    bool jump = false;
+    int jump_amount = 10;
 };
