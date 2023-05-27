@@ -8,6 +8,7 @@
 #include "Shader/Shader.h"
 #include "Rectangle/Rectangle.h"
 #include "Triangle/Triangle.h"
+#include "Line/Line.h"
 
 using namespace gl;
 
@@ -67,6 +68,8 @@ int main()
 
     Rectangle rectangle(60, 60, 100, 100);
 
+    Line line;
+
     gl_textrenderer textrenderer(SCREEN_WIDTH, SCREEN_HEIGHT,
                                  "assets/UbuntuMono-R.ttf", 13,
                                  {1.0f, 1.0f, 1.0f, 1.1f});
@@ -113,9 +116,8 @@ int main()
 
                 // draw
                 rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
-                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f,
-                            1.0f, 1.0f);
-                draw_line();
+                line.draw(shaderProgram, 1.0f, 1.0f, 1.0f, 0, 100,
+                          SCREEN_WIDTH, 100);
 
                 textrenderer.render_text("gl_jump",
                                          SCREEN_WIDTH / 2 -
@@ -187,9 +189,8 @@ int main()
                     bg_triangle.draw(shaderProgram, 0.13f, 0.13f, 0.13f);
                     rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
                     triangle.draw(shaderProgram, 0.7f, 0.2f, 0.0f);
-                    glUniform3f(glGetUniformLocation(shaderProgram, "color"),
-                                1.0f, 1.0f, 1.0f);
-                    draw_line();
+                    line.draw(shaderProgram, 1.0f, 1.0f, 1.0f, 0, 100,
+                              SCREEN_WIDTH, 100);
 
                     textrenderer.render_text(score_text, 10,
                                              SCREEN_HEIGHT - 20);
