@@ -167,10 +167,9 @@ int main()
 
                 if (check_collision_x(
                         rectangle.rectangle_pos_x + rectangle.rectangle_width,
-                        rectangle.rectangle_pos_x,
-                        triangle.triangle_pos_x,
-                        triangle.triangle_pos_x + triangle.triangle_width) &&
-                    check_collision_y(rectangle.rectangle_pos_y))
+                        rectangle.rectangle_pos_x, triangle.triangle_pos_x,
+                        triangle.triangle_pos_x + triangle.triangle_width)
+                    && check_collision_y(rectangle.rectangle_pos_y))
                 {
                     rectangle.jump_state = false;
                     bg_triangle.triangle_pos_x = SCREEN_WIDTH + 550;
