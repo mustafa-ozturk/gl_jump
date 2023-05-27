@@ -56,3 +56,17 @@ void Rectangle::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void Rectangle::jump()
+{
+    rectangle_pos_y += jump_amount;
+    if (rectangle_pos_y > 250)
+    {
+        jump_amount = -10;
+    }
+    if (rectangle_pos_y <= 100)
+    {
+        jump_amount = 10;
+        jump_state = false;
+    }
+}
+
