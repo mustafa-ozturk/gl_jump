@@ -97,10 +97,11 @@ int main()
         {
             case GAME_STATE::START:
                 // update
-
+                // -------------------------------------------
                 // don't allow game to restart
                 // if player was previously holding space
-                if (curr_space_state == GLFW_PRESS && prev_space_state == GLFW_RELEASE)
+                if (curr_space_state == GLFW_PRESS &&
+                    prev_space_state == GLFW_RELEASE)
                 {
                     rectangle.jump_state = is_space_key_pressed(window);
                 }
@@ -115,6 +116,7 @@ int main()
                 }
 
                 // draw
+                // -------------------------------------------
                 rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
                 line.draw(shaderProgram, 1.0f, 1.0f, 1.0f, 0, 100,
                           SCREEN_WIDTH, 100);
@@ -122,13 +124,15 @@ int main()
                 textrenderer.render_text("gl_jump",
                                          SCREEN_WIDTH / 2 -
                                          (title_text_size.first / 2),
-                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 3) -
+                                         (SCREEN_HEIGHT -
+                                          SCREEN_HEIGHT / 3) -
                                          (title_text_size.second / 2) + 2
                 );
                 textrenderer.render_text("press [ space ] to start",
                                          SCREEN_WIDTH / 2 -
                                          (start_text_size.first / 2),
-                                         (SCREEN_HEIGHT - SCREEN_HEIGHT / 2.6) -
+                                         (SCREEN_HEIGHT -
+                                          SCREEN_HEIGHT / 2.6) -
                                          (start_text_size.second / 2) + 2
                 );
                 if (score > 0)
@@ -138,13 +142,14 @@ int main()
                                              (score_text_size.first / 2),
                                              (SCREEN_HEIGHT -
                                               SCREEN_HEIGHT / 2.4) -
-                                             (score_text_size.second / 2) + 2
+                                             (score_text_size.second / 2) +
+                                             2
                     );
                 }
                 break;
             case GAME_STATE::GAME:
                 // update
-            {
+                // -------------------------------------------
                 score += 1;
                 // allow the player to hold space by not checking prev state
                 if (curr_space_state == GLFW_PRESS)
@@ -156,7 +161,6 @@ int main()
                     rectangle.jump();
                 }
 
-                // update triangle positions
                 triangle.update_position(score, delta_time, SCREEN_WIDTH,
                                          -((rand() % 50) * 100) - 200);
                 bg_triangle.update_position(score, delta_time, SCREEN_WIDTH,
@@ -181,20 +185,18 @@ int main()
                     triangle.triangle_pos_x = SCREEN_WIDTH;
                     current_game_state = GAME_STATE::START;
                 }
-            }
-                // draw
-                {
-                    glUseProgram(shaderProgram);
-                    // background triangle
-                    bg_triangle.draw(shaderProgram, 0.13f, 0.13f, 0.13f);
-                    rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
-                    triangle.draw(shaderProgram, 0.7f, 0.2f, 0.0f);
-                    line.draw(shaderProgram, 1.0f, 1.0f, 1.0f, 0, 100,
-                              SCREEN_WIDTH, 100);
 
-                    textrenderer.render_text(score_text, 10,
-                                             SCREEN_HEIGHT - 20);
-                }
+                // draw
+                // -------------------------------------------
+                glUseProgram(shaderProgram);
+                bg_triangle.draw(shaderProgram, 0.13f, 0.13f, 0.13f);
+                rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
+                triangle.draw(shaderProgram, 0.7f, 0.2f, 0.0f);
+                line.draw(shaderProgram, 1.0f, 1.0f, 1.0f, 0, 100,
+                          SCREEN_WIDTH, 100);
+
+                textrenderer.render_text(score_text, 10,
+                                         SCREEN_HEIGHT - 20);
                 break;
         }
         prev_space_state = curr_space_state;
