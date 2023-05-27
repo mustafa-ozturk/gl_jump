@@ -75,6 +75,10 @@ int main()
     int current_game_state = GAME_STATE::START;
     int prev_space_state = GLFW_RELEASE;
 
+    auto title_text_size = textrenderer.get_text_size("gl_jump");
+    auto start_text_size = textrenderer.get_text_size(
+            "press [ space ] to start");
+
     srand(1);
     while (!glfwWindowShouldClose(window))
     {
@@ -86,9 +90,6 @@ int main()
         last_frame = current_frame;
 
         std::string score_text = "score: " + std::to_string(score);
-        auto title_text_size = textrenderer.get_text_size("gl_jump");
-        auto start_text_size = textrenderer.get_text_size(
-                "press [ space ] to start");
         auto score_text_size = textrenderer.get_text_size(score_text);
 
         int curr_space_state = glfwGetKey(window, GLFW_KEY_SPACE);
@@ -188,7 +189,6 @@ int main()
 
                 // draw
                 // -------------------------------------------
-                glUseProgram(shaderProgram);
                 bg_triangle.draw(shaderProgram, 0.13f, 0.13f, 0.13f);
                 rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
                 triangle.draw(shaderProgram, 0.7f, 0.2f, 0.0f);
