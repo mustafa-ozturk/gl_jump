@@ -15,11 +15,8 @@ using namespace gl;
 const unsigned int SCREEN_WIDTH = 500;
 const unsigned int SCREEN_HEIGHT = 500;
 
-void draw_line();
-
-bool
-check_collision_x(int rectangle_front, int rectangle_back, int triangle_front,
-                  int triangle_back);
+bool check_collision_x(int rectangle_front, int rectangle_back,
+                       int triangle_front, int triangle_back);
 
 bool check_collision_y(int rectangle_bottom);
 
@@ -203,46 +200,6 @@ int main()
     }
 
     return 0;
-}
-
-void draw_line()
-{
-    /*
-     *   A --- B
-    */
-    std::array<GLuint, 8> vertices{
-            0, 100,  // A
-            SCREEN_WIDTH, 100,  // B
-    };
-
-    std::array<GLuint, 2> indices{
-            0, 1,
-    };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLuint),
-                 vertices.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_INT, GL_FALSE, 2 * sizeof(GLuint),
-                          (const void*) 0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int),
-                 indices.data(), GL_STATIC_DRAW);
-
-    glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 bool check_collision_x(int rectangle_front, int rectangle_back,
