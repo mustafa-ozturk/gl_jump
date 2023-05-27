@@ -102,9 +102,7 @@ int main()
                 }
 
                 // draw
-                glUseProgram(shaderProgram);
-                glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-                rectangle.draw();
+                rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
                 glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
                 draw_line();
 
@@ -162,8 +160,7 @@ int main()
                     // background triangle
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.13f, 0.13f, 0.13f);
                     bg_triangle.draw();
-                    glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.0f, 0.2f, 0.7f);
-                    rectangle.draw();
+                    rectangle.draw(shaderProgram, 0.0f, 0.2f, 0.7f);
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 0.7f, 0.2f, 0.0f);
                     triangle.draw();
                     glUniform3f(glGetUniformLocation(shaderProgram, "color"), 1.0f, 1.0f, 1.0f);
